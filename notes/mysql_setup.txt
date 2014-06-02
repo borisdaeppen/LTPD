@@ -1,0 +1,47 @@
+## DB installieren
+sudo apt-get install mysql-server mysql-client
+
+## einloggen
+mysql -uroot -p
+
+## erstellen
+CREATE DATABASE passwords; 
+USE passwords;
+
+## tabelle erzeugen
+CREATE TABLE standard (
+id INT NOT NULL AUTO_INCREMENT,
+public_credential varchar(255),
+private_credential varchar(255) NOT NULL,
+service_address varchar(255),
+note varchar(255),
+PRIMARY KEY(id)
+);
+
+## Passwort-Eintrag erzeugen
+INSERT INTO standard
+(public_credential, private_credential, service_address)
+VALUES
+('boris.dae@spec.ch',
+AES_ENCRYPT('geheim123!', SHA2('db_pass', 512)),
+'cyon.ch'
+); 
+
+## Verschlüsselter Eintrag
+SELECT * FROM standard;
+## +----+---------------------------------+------------------------------+-----------------+------+
+## | id | public_credential               | private_credential           | service_address | note |
+## +----+---------------------------------+------------------------------+-----------------+------+
+## |  1 | boris.dae@spec.ch | ,åæƒ!„‘Ýw(ôÌ@þvÒ             | cyon.ch         | NULL |
+## +----+---------------------------------+------------------------------+-----------------+------+
+
+## Passwort auslesen
+SELECT AES_DECRYPT(private_credential, SHA2('db_pass', 512)) AS password
+FROM standard WHERE public_credential LIKE "boris%";
+
+## +------------+
+## | password   |
+## +------------+
+## | geheim123! |
+## +------------+
+
