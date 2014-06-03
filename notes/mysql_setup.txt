@@ -18,6 +18,13 @@ note varchar(255),
 PRIMARY KEY(id)
 );
 
+## db-user ohne Passwort erzeugen
+CREATE USER 'pws'@'localhost';
+GRANT SELECT, INSERT, DELETE ON passwords.standard TO 'pws'@'localhost';
+
+## als db-user ohne Passwort neu einloggen
+mysql -upws
+
 ## Passwort-Eintrag erzeugen
 INSERT INTO standard
 (public_credential, private_credential, service_address)
